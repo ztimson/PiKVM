@@ -3,7 +3,7 @@
 # Configuration =======================================================================================================
 
 SSID="$HOSTNAME"                # Default SSID to device hostname
-PASSWORD="guesswhatitis"        # Default password if not specified
+PASSWORD=""        # Default password if not specified
 
 DHCP_IP="10.10.10.1"            # Device IP on access point
 DHCP_START="10.10.10.2"         # Start of DHCP IP pool
@@ -141,6 +141,11 @@ if [ -n "$FAILOVER" ]; then
     fi
 
     if [ -z "$(grep "$SCRIPT" /etc/crontab)" ]; then
+        if [ -z "$PASSWORD" ]; then
+            echo "Error: Password required"
+            show_help
+            exit 1
+        fi
         enable_cron
     fi
 
@@ -152,5 +157,10 @@ fi
 if [ "$DISABLE" == "true" ]; then
     disable_ap
 else
+    if [ -z "$PASSWORD" ]; then
+        echo "Error: Password required"
+        show_help
+        exit 1
+    fi
     enable_ap
 fi
