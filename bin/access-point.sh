@@ -2,55 +2,62 @@
 
 # Configuration =======================================================================================================
 
-SSID="$(hostname)"              # Access point SSID name
-PASSWORD="guesswhatitis"        # Access point password
+SSID="$HOSTNAME"                # Default SSID to device hostname
+PASSWORD="guesswhatitis"        # Default password if not specified
+
 DHCP_IP="10.10.10.1"            # Device IP on access point
 DHCP_START="10.10.10.2"         # Start of DHCP IP pool
 DHCP_END="10.10.10.254"         # End of DHCP IP pool
 
 # End of Configuration ================================================================================================
 
-SCRIPT="$(basename $0)"
-QUIET=false
+DISABLE=false
 FAILOVER=""
+QUIET=false
+SCRIPT="$(basename $0)"
 
 show_help() {
-    echo "Usage: $(basename $0) [OPTIONS]"
-    echo ""
-    echo "Options:"
-    echo "  -f, --failover        Automaticaly toggle AP when network connection is lost"
-    echo "  --failover=false      Disable automatic toggling of AP"
-    echo "  -h, --help            Show this help message"
-    echo "  -q, --quiet           Run without output"
-    echo "  --ssid <SSID>         Override default SSID"
-    echo "  --passwd <PASSWORD>   Override default password"
-}
+    cat <<EOF
+Usage: $SCRIPT [OPTIONS]
 
-is_active() {
-    [ "$(systemctl is-active hostapd)" == "active" ]
+Options:
+  -d, --disable             Turn off access point
+  -f, --failover            Automatically turn on/off on network disconnect/connect
+  --failover=false          Disable automatic on/off on disconnect/connect
+  -h, --help                Show this help message
+  -q, --quiet               Run without output
+  --ssid SSID               The SSID for the access point
+  --passwd PASSWORD         The password for the access point
+EOF
 }
 
 is_connected() {
-    [ -n "$(iwgetid -r)" ] 
+    [ -n "$(iwgetid -r)" ]
+}
+
+is_on() {
+    [ "$(systemctl is-active hostapd)" == "active" ]
 }
 
 enable_ap() {
-    log_message "Enabling AP..."
+    if is_on; then
+        log_message "Access point is already on"
+        exit
+    fi
+    log_message "Turning on access point: $SSID"
     systemctl stop dhcpcd
     systemctl stop wpa_supplicant
     systemctl stop systemd-resolved
-
     ip link set wlan0 down
-    ip link add link wlan0 name ap0 type macvlan mode bridge
-    ip link set ap0 up
-    ip addr add "$DHCP_IP/24" dev ap0
+    ip link set wlan0 up
+    ip addr add "$DHCP_IP/24" dev wlan0
 
     # Configure and start hostapd
     cat <<EOF > /etc/hostapd/hostapd.conf
-interface=ap0
+interface=wlan0
 ssid=$SSID
 hw_mode=g
-channel=0
+channel=4
 wpa=2
 wpa_passphrase=$PASSWORD
 wpa_key_mgmt=WPA-PSK
@@ -62,17 +69,19 @@ EOF
 
     # Configure and start dnsmasq
     cat <<EOF > /etc/dnsmasq.conf
-interface=ap0
+interface=wlan0
 dhcp-range=$DHCP_START,$DHCP_END,255.255.255.0,24h
 EOF
     systemctl start dnsmasq
 }
 
 disable_ap() {
-    log_message "Disabling AP..."
-    ip addr del "$DHCP_IP/24" dev ap0
-    ip link set ap0 down
-    ip link delete ap0
+    if ! is_on; then
+        log_message "Access point is already off"
+        exit
+    fi
+    log_message "Turning off access point..."
+    ip addr del "$DHCP_IP/24" dev wlan0
     systemctl stop hostapd
     systemctl stop dnsmasq
     systemctl start systemd-resolved
@@ -85,13 +94,13 @@ enable_cron() {
         exit 1
     fi
     sed -i "/$SCRIPT/d" /etc/crontab
-    echo "* * * * *     root    $(realpath $0) -q" >> /etc/crontab
-    echo "Automatic fallback AP enabled"
+    echo "* * * * *     root    $(realpath $0) --ssid '$SSID' --passwd '$PASSWORD' -q -f" >> /etc/crontab
+    echo "Access point failover enabled"
 }
 
 disable_cron() {
     sed -i "/$SCRIPT/d" /etc/crontab
-    echo "Automatic fallback AP disabled"
+    echo "Access point failover disabled"
 }
 
 log_message() {
@@ -103,11 +112,12 @@ log_message() {
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        -f|--failover|--failover=true) FAILOVER=true ;;
+        -d|--disable) DISABLE=true ;;
+        -f|--failover) FAILOVER=true ;;
         --failover=false) FAILOVER=false ;;
         -h|--help) show_help && exit ;;
         -q|--quiet) QUIET=true ;;
-        --ssid) shift && SSID="$1" ;;
+        --ssid)  shift && SSID="$1" ;;
         --passwd) shift && PASSWORD="$1" ;;
         *)
             echo "Unknown option: $1"
@@ -124,14 +134,23 @@ if [ "$UID" != "0" ]; then
     exit 1
 fi
 
-# Check if connected to WiFi
-if [ "$FORCE" == "false" ] && is_connected; then
-    log_message "Already connected to WiFi"
-    # Disable the access point if it's running
-    if [ "$(systemctl is-active hostapd)" == "active" ]; then
-        disable_ap
+if [ -n "$FAILOVER" ]; then
+    if [ "$FAILOVER" == "false" ]; then
+        disable_cron
+        exit
     fi
-elif ! is_active; then
-    if [ "$FORCE" == "true" ]; then disable_cron; fi
+
+    if [ -z "$(grep "$SCRIPT" /etc/crontab)" ]; then
+        enable_cron
+    fi
+
+    if is_connected; then
+        DISABLE=true
+    fi
+fi
+
+if [ "$DISABLE" == "true" ]; then
+    disable_ap
+else
     enable_ap
 fi
