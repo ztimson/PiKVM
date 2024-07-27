@@ -25,6 +25,9 @@ if [ "$?" != "0" ]; then
     exit
 fi
 
+echo "Running updates, this might take a few minutes..."
+pikvm-update
+
 # Fix banner
 echo ""
 echo "Updating the banner..."

@@ -1,9 +1,10 @@
 #!/usr/bin/python
+
 # -*- coding:utf-8 -*-
 import sys
 import os
-picdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'pic')
 libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
+
 if os.path.exists(libdir):
     sys.path.append(libdir)
 
@@ -21,12 +22,14 @@ try:
     epd = epd2in13_V4.EPD()
     logging.info("init and Clear")
     epd.init()
+
     epd.Clear(0xFF)
 
     # Drawing on the image
-    font15 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 15)
-    font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
-    
+    print(os.path.join(libdir, 'Font.ttc'))
+    font15 = ImageFont.truetype(os.path.join(libdir, 'Font.ttc'), 15)
+    font24 = ImageFont.truetype(os.path.join(libdir, 'Font.ttc'), 24)
+    print('fonts done')
     if 1:
         logging.info("E-paper refresh")
         epd.init()
@@ -51,7 +54,7 @@ try:
         
         # read bmp file 
         logging.info("2.read bmp file...")
-        image = Image.open(os.path.join(picdir, '2in13.bmp'))
+        image = Image.open(os.path.join(libdir, '2in13.bmp'))
         epd.display(epd.getbuffer(image))
         time.sleep(2)
         
@@ -59,7 +62,7 @@ try:
         logging.info("3.read bmp file on window...")
         # epd.Clear(0xFF)
         image1 = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
-        bmp = Image.open(os.path.join(picdir, '100x100.bmp'))
+        bmp = Image.open(os.path.join(libdir, '100x100.bmp'))
         image1.paste(bmp, (2,2))    
         epd.display(epd.getbuffer(image1))
         time.sleep(2)
@@ -89,7 +92,7 @@ try:
         
         # read bmp file 
         logging.info("2.read bmp file...")
-        image = Image.open(os.path.join(picdir, '2in13.bmp'))
+        image = Image.open(os.path.join(libdir, '2in13.bmp'))
         epd.display_fast(epd.getbuffer(image))
         time.sleep(2)
         
@@ -97,7 +100,7 @@ try:
         logging.info("3.read bmp file on window...")
         # epd.Clear(0xFF)
         image1 = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
-        bmp = Image.open(os.path.join(picdir, '100x100.bmp'))
+        bmp = Image.open(os.path.join(libdir, '100x100.bmp'))
         image1.paste(bmp, (2,2))    
         epd.display_fast(epd.getbuffer(image1))
         time.sleep(2)
