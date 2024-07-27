@@ -9,9 +9,9 @@ The official PiKVM is expensive so I decided take build my own & add some featur
 - Wireguard client to act as reverse VPN (Aviods network firewalls, port forwarding & can be remotely configured by DNS)
 
 ## Hardware
- - [Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)
- - [ENC28J60 Ethernet -> SPI Module](https://www.waveshare.com/enc28j60-ethernet-board.htm)
- - [HDMI to CSI-2 Module](https://www.waveshare.com/hdmi-to-csi-adapter.htm)
+ - [Pi Zero 2 W + SD Card](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)
+ - [Ethernet to SPI](https://www.waveshare.com/enc28j60-ethernet-board.htm)
+ - [HDMI to CSI-2](https://www.waveshare.com/hdmi-to-csi-adapter.htm)
  - [2.13" E-Ink Display](https://www.waveshare.com/2.13inch-e-paper-hat.htm)
 
 ## Assembly
