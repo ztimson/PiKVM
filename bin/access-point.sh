@@ -138,14 +138,12 @@ if [ -n "$FAILOVER" ]; then
         exit
     fi
 
-    if [ -z "$(grep "$SCRIPT" /etc/crontab)" ]; then
-        if [ -z "$PASSWORD" ]; then
-            echo "Error: Password required"
-            show_help
-            exit 1
-        fi
-        enable_cron
+    if [ -z "$PASSWORD" ]; then
+        echo "Error: Password required"
+        show_help
+        exit 1
     fi
+    enable_cron
 
     if is_connected; then
         DISABLE=true
