@@ -33,8 +33,8 @@ WIFI_ESSID="wifi_name"
 WIFI_PASSWD="wifi_pass"
 ```
 4. Insert SD card into Pi, connect an HDMI cable to the PI HDMI output (not the added module), connect the USB port to power
-5. Open the IP address on screen & use `admin/admin` to login & open the console
-6. Login as root & run the install script:
+5. After statup, open the IP address displayed in your browser & use `admin/admin` to login
+6. Open the console, login as root & run the install script:
 ```
 $ su -
 **Enter password: root**
