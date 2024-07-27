@@ -5,6 +5,7 @@ if [ "$UID" != "0" ]; then
   exit 1
 fi
 
+rw
 git clone https://git.zakscode.com/ztimson/PiKVM.git
 cd PiKVM
 
