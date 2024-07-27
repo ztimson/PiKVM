@@ -104,6 +104,7 @@ log_message() {
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -f|--failover|--failover=true) FAILOVER=true ;;
+        --failover=false) FAILOVER=false ;;
         -h|--help) show_help && exit ;;
         -q|--quiet) QUIET=true ;;
         --ssid) shift && SSID="$1" ;;
