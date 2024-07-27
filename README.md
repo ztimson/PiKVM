@@ -1,12 +1,12 @@
 # PiKVM - Pi Zero 2 W
 
-The official PiKVM is expensive so I decided take the DIY approuch to save on costs & add some addition features:
+The official PiKVM is expensive so I decided take build my own & add some features in the process:
 - "USB dongle" form-factor with minimal connections
 - Create access point when not connected to anything for easy access
-- Optional ethernet connection since my servers don't have a wifi connection
-- E-ink display for displaying network information
-- Wireguard host to act as jumpbox
-- Wireguard client to act as reverse VPN (Aviods network firewalls & can be remotely configured by DNS)
+- Optional ethernet connection for wired networks
+- E-ink display for showing network information
+- Wireguard host to act as network jumpbox (If port forwarding is an option)
+- Wireguard client to act as reverse VPN (Aviods network firewalls, port forwarding & can be remotely configured by DNS)
 
 ## Hardware
  - [Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)
@@ -26,7 +26,7 @@ The official PiKVM is expensive so I decided take the DIY approuch to save on co
 ```
 dtoverlay=spi=on
 ```
-3. Edit `/boot/pikvm.txt` to include your WiFi credentials:
+3. Edit `/boot/pikvm.txt` to include your WiFi credentials for initial configuration:
 ```
 FIRST_BOOT=1
 WIFI_ESSID="wifi_name"
@@ -34,7 +34,7 @@ WIFI_PASSWD="wifi_pass"
 ```
 4. Insert SD card into Pi, connect an HDMI cable to the PI HDMI output (not the added module), connect the USB port to power
 5. Open the IP address on screen & use `admin/admin` to login & open the console
-6. Login as root, enable rw mode & run the install scrip:
+6. Login as root, enable rw mode, run updates & run the install scrip:
 ```
 $ su -
 **Enter password: root**
