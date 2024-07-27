@@ -2,10 +2,7 @@
 
 # Configuration =======================================================================================================
 
-SSID="$HOSTNAME"                # Default SSID to device hostname
-PASSWORD=""        # Default password if not specified
-
-DHCP_IP="10.10.10.1"            # Device IP on access point
+SSID="$HOSTNAME"                # Defaults SSID to hostname
 DHCP_START="10.10.10.2"         # Start of DHCP IP pool
 DHCP_END="10.10.10.254"         # End of DHCP IP pool
 
@@ -13,6 +10,7 @@ DHCP_END="10.10.10.254"         # End of DHCP IP pool
 
 DISABLE=false
 FAILOVER=""
+PASSWORD=""
 QUIET=false
 SCRIPT="$(basename $0)"
 
