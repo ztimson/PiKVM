@@ -2,11 +2,10 @@
 
 The official PiKVM is expensive so I decided take build my own & add some features in the process:
 - Small "USB dongle" form-factor with minimal connections
-- Create access point when not connected to anything for easy access
-- Optional ethernet connection for wired networks
+- Create access point when network connection is lost for easy access
+- Ethernet connection for wired networks
 - E-ink display for showing network information
-- Wireguard host to act as network jumpbox (If port forwarding is an option)
-- Wireguard client to act as reverse VPN (Aviods network firewalls, port forwarding & can be remotely configured by DNS)
+- Configure wireguard from boot partion to create a jumpbox
 
 ## Hardware
  - [Pi Zero 2 W + SD Card](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)
