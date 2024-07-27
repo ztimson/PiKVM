@@ -10,7 +10,7 @@ The official PiKVM is expensive so I decided take build my own & add some featur
 
 ## Hardware
  - [Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)
- - [ENC28J60 Ethernet -> SPI Module](https://www.waveshare.com/enc28j60-ethernet-board.htm) (Slow but the only option)
+ - [ENC28J60 Ethernet -> SPI Module](https://www.waveshare.com/enc28j60-ethernet-board.htm)
  - [HDMI to CSI-2 Module](https://www.waveshare.com/hdmi-to-csi-adapter.htm)
  - [2.13" E-Ink Display](https://www.waveshare.com/2.13inch-e-paper-hat.htm)
 
@@ -34,7 +34,7 @@ WIFI_PASSWD="wifi_pass"
 ```
 4. Insert SD card into Pi, connect an HDMI cable to the PI HDMI output (not the added module), connect the USB port to power
 5. Open the IP address on screen & use `admin/admin` to login & open the console
-6. Login as root, enable rw mode & run the install script:
+6. Login as root & run the install script:
 ```
 $ su -
 **Enter password: root**
