@@ -34,7 +34,7 @@ WIFI_PASSWD="wifi_pass"
 ```
 4. Insert SD card into Pi, connect an HDMI cable to the PI HDMI output (not the added module), connect the USB port to power
 5. Open the IP address on screen & use `admin/admin` to login & open the console
-6. Login as root, enable rw mode, run updates & run the install scrip:
+6. Login as root, enable rw mode & run the install script:
 ```
 $ su -
 **Enter password: root**
