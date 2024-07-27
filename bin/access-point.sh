@@ -11,36 +11,46 @@ DHCP_END="10.10.10.254"         # End of DHCP IP pool
 # End of Configuration ================================================================================================
 
 SCRIPT="$(basename $0)"
-FORCE=false
 QUIET=false
+FAILOVER=""
 
 show_help() {
     echo "Usage: $(basename $0) [OPTIONS]"
     echo ""
     echo "Options:"
-    echo "  -f, --force         Create AP regardless of WiFi status"
-    echo "  -h, --help          Show this help message"
-    echo "  -q, --quiet         Run without output"
-    echo "  --enable            Enable automatic fallback AP"
-    echo "  --disable           Disable automatic fallback AP"
+    echo "  -f, --failover        Automaticaly toggle AP when network connection is lost"
+    echo "  --failover=false      Disable automatic toggling of AP"
+    echo "  -h, --help            Show this help message"
+    echo "  -q, --quiet           Run without output"
+    echo "  --ssid <SSID>         Override default SSID"
+    echo "  --passwd <PASSWORD>   Override default password"
+}
+
+is_active() {
+    [ "$(systemctl is-active hostapd)" == "active" ]
+}
+
+is_connected() {
+    [ -n "$(iwgetid -r)" ] 
 }
 
 enable_ap() {
-    rw > /dev/null
     log_message "Enabling AP..."
     systemctl stop dhcpcd
     systemctl stop wpa_supplicant
     systemctl stop systemd-resolved
+
     ip link set wlan0 down
-    ip link set wlan0 up
-    ip addr add "$DHCP_IP/24" dev wlan0
+    ip link add link wlan0 name ap0 type macvlan mode bridge
+    ip link set ap0 up
+    ip addr add "$DHCP_IP/24" dev ap0
 
     # Configure and start hostapd
     cat <<EOF > /etc/hostapd/hostapd.conf
-interface=wlan0
+interface=ap0
 ssid=$SSID
 hw_mode=g
-channel=7
+channel=0
 wpa=2
 wpa_passphrase=$PASSWORD
 wpa_key_mgmt=WPA-PSK
@@ -52,7 +62,7 @@ EOF
 
     # Configure and start dnsmasq
     cat <<EOF > /etc/dnsmasq.conf
-interface=wlan0
+interface=ap0
 dhcp-range=$DHCP_START,$DHCP_END,255.255.255.0,24h
 EOF
     systemctl start dnsmasq
@@ -60,7 +70,9 @@ EOF
 
 disable_ap() {
     log_message "Disabling AP..."
-    ip addr del "$DHCP_IP/24" dev wlan0
+    ip addr del "$DHCP_IP/24" dev ap0
+    ip link set ap0 down
+    ip link delete ap0
     systemctl stop hostapd
     systemctl stop dnsmasq
     systemctl start systemd-resolved
@@ -91,21 +103,15 @@ log_message() {
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        -f|--force) FORCE=true ;;
+        -f|--failover|--failover=true) FAILOVER=true ;;
         -h|--help) show_help && exit ;;
         -q|--quiet) QUIET=true ;;
-        --enable) enable_cron && exit ;;
-        --disable) disable_cron && disable_ap && exit ;;
+        --ssid) shift && SSID="$1" ;;
+        --passwd) shift && PASSWORD="$1" ;;
         *)
-            if [ -z "$SSID" ]; then
-                SSID="$1"
-            elif [ -z "$PASSWORD" ]; then
-                PASSWORD="$1"
-            else
-                echo "Unknown option: $1"
-                show_help
-                exit 1
-            fi
+            echo "Unknown option: $1"
+            show_help
+            exit 1
             ;;
     esac
     shift
@@ -118,13 +124,13 @@ if [ "$UID" != "0" ]; then
 fi
 
 # Check if connected to WiFi
-if [ "$FORCE" == "false" ] && [ -n "$(iwgetid -r)" ] ; then
+if [ "$FORCE" == "false" ] && is_connected; then
     log_message "Already connected to WiFi"
     # Disable the access point if it's running
     if [ "$(systemctl is-active hostapd)" == "active" ]; then
         disable_ap
     fi
-elif [ "$(systemctl is-active hostapd)" != "active" ]; then
+elif ! is_active; then
     if [ "$FORCE" == "true" ]; then disable_cron; fi
     enable_ap
 fi
