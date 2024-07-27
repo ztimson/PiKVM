@@ -38,5 +38,4 @@ WIFI_PASSWD="wifi_pass"
 ```
 $ su -
 **Enter password: root**
-# rw
 # curl https://git.zakscode.com/ztimson/PiKVM/raw/branch/master/install.sh | bash
