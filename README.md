@@ -1,7 +1,7 @@
 # PiKVM - Pi Zero 2 W
 
 The official PiKVM is expensive so I decided take build my own & add some features in the process:
-- "USB dongle" form-factor with minimal connections
+- Small "USB dongle" form-factor with minimal connections
 - Create access point when not connected to anything for easy access
 - Optional ethernet connection for wired networks
 - E-ink display for showing network information
@@ -15,10 +15,10 @@ The official PiKVM is expensive so I decided take build my own & add some featur
  - [2.13" E-Ink Display](https://www.waveshare.com/2.13inch-e-paper-hat.htm)
 
 ## Assembly
-1. _Optional: Cut the head off a USB cable & solder it to the debug pads on the back of the Pi; extend to the right (Opposite the SD card) & glue with hot glue_
+1. Cut the head off a USB cable & solder it to the debug pads on the back of the Pi; extend to the right (Opposite the SD card)
 2. Connect HDMI/CSI-2 module via short ribbon cable (~40 mm); fold over and glue to back of board alighting with the SD card
-3. _Optional: Wire the Ethernet/SPI module onto SPI chanel 0_
-4. _Optional: Connect display via 8 pins on side to SPI channel 1_
+3. Wire the Ethernet/SPI module onto SPI chanel 0
+4. Connect E-Ink display via side pins to SPI channel 1
 
 ## Install
 1. Flash SD card with [latest PiKVM image](https://pikvm.org/download/) using the [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
