@@ -7,7 +7,7 @@ The official PiKVM is expensive so I decided take build my own & add some featur
 - Creates access point when network connection is lost for easy configuration
 - Ethernet connection for wired networks
 - E-ink display for showing network information
-- Setup wireguard by adding a `wg0.conf` file to the boot partion to create a jumpbox
+- Create a jumpbox by adding a wireguard config (`wg0.conf`) to the boot partion
 
 ## Hardware
  - [Pi Zero 2 W + SD Card](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)
