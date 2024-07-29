@@ -1,13 +1,17 @@
 # PiKVM - Pi Zero 2 W
 
 The official PiKVM is expensive so I decided take build my own & add some features in the process:
+- Small "USB dongle" form-factor with minimal connections 
 - Simple install script which lets you toggle all added features
 - Static MAC addresses to fix IP changes on reboot while using DHCP
-- Small "USB dongle" form-factor with minimal connections
 - Creates access point when network connection is lost for easy configuration
 - Ethernet connection for wired networks
+  - Ethernet passthrough coming soon!
 - E-ink display for showing network information
 - Create a jumpbox by adding a wireguard config (`wg0.conf`) to the boot partion
+- Simple SWAP managment script to add/remove memory on the fly
+  - Install 1G of memory: `swap.sh 1024`
+  - Uninstall swap: `swap.sh --disable`
 
 ## Hardware
  - [Pi Zero 2 W + SD Card](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)
