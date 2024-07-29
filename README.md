@@ -1,6 +1,7 @@
 # PiKVM - Pi Zero 2 W
 
 The official PiKVM is expensive so I decided take build my own & add some features in the process:
+- Simple install script which lets you toggle all added features
 - Static MAC addresses to fix IP changes on reboot while using DHCP
 - Small "USB dongle" form-factor with minimal connections
 - Creates access point when network connection is lost for easy configuration
