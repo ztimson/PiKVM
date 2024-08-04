@@ -57,7 +57,8 @@ The official PiKVM is expensive so I decided take build my own & add some featur
 ```
 # For screen and/or ethernet:
 dtparam=spi=on
-# Ethernet:
+
+# Pick correct ethernet chip:
 dtoverlay=w5500
 # Or
 dtoverlay=enc28j60
