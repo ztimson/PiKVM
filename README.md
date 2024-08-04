@@ -9,13 +9,15 @@ The official PiKVM is expensive so I decided take build my own & add some featur
   - Ethernet passthrough coming soon!
 - E-ink display for showing network information
 - Create a jumpbox by adding a wireguard config (`wg0.conf`) to the boot partion
-- Simple SWAP managment script to add/remove memory on the fly
+- Simple SWAP managment script to _download_ more memory on the fly
   - Install 1G of memory: `swap.sh 1024`
   - Uninstall swap: `swap.sh --disable`
 
 ## Hardware
  - [Pi Zero 2 W + SD Card](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/)
- - [Ethernet to SPI](https://www.waveshare.com/enc28j60-ethernet-board.htm)
+ - Ethernet to SPI
+   - W5500 (Faster)
+   - or [ENC28J60](https://www.waveshare.com/enc28j60-ethernet-board.htm)
  - [HDMI to CSI-2](https://www.waveshare.com/hdmi-to-csi-adapter.htm)
  - [2.13" E-Ink Display](https://www.waveshare.com/2.13inch-e-paper-hat.htm)
 
@@ -23,23 +25,52 @@ The official PiKVM is expensive so I decided take build my own & add some featur
 1. Cut the head off a USB cable & solder it to the debug pads on the back of the Pi; extend to the right (Opposite the SD card)
 2. Connect HDMI/CSI-2 module via short ribbon cable (~40 mm); fold over and glue to back of board alighting with the SD card
 3. Wire the Ethernet/SPI module onto SPI chanel 0
+
+| Module | RPI GPIO (Board) |
+|--------|------------------|
+| V      | 17 (5/3.3 V)     |
+| G      | 20 (Any Ground)  |
+| MI     | 19 (SPI0 MOSI)   |
+| MO     | 21 (SPI0 MISO)   |
+| SCK    | 23 (SPI0 SCLK)   |
+| CS     | 24 (SPI0 CE0)    |
+| INT    | 22 (GPIO 25)     |
+
 4. Connect E-Ink display via side pins to SPI channel 1
+
+| Module | RPI GPIO (Board) |
+|--------|------------------|
+| VCC    | 4  (5/3.3 V)     |
+| GND    | 6 (Any Ground)   |
+| DIN    | 19 (SPI0 MOSI)   |
+| CLK    | 23 (SPI0 SCLK)   |
+| CS     | 26 (SPI0 CE1)    |
+| DC     | 15 (GPIO 22)     |
+| RST    | 16 (GPIO 23)     |
+| BUSY   | 18 (GPIO 24)     |
 
 ## Install
 1. Flash SD card with [latest PiKVM image](https://pikvm.org/download/) using the [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
-2. Edit `/boot/config.txt` to include:
+2. Open the newly created boot directory on the SD card in your file browser
+3. Enable SSH by creating an empty file: `/boot/ssh`
+4. Edit `/boot/config.txt` to include:
 ```
-dtoverlay=spi=on
+# For screen and/or ethernet:
+dtparam=spi=on
+# Ethernet:
+dtoverlay=w5500
+# Or
+dtoverlay=enc28j60
 ```
-3. Edit `/boot/pikvm.txt` to include your WiFi credentials for initial configuration:
+5. Edit `/boot/pikvm.txt` to include your WiFi credentials for initial configuration:
 ```
 FIRST_BOOT=1
 WIFI_ESSID="wifi_name"
 WIFI_PASSWD="wifi_pass"
 ```
-4. Insert SD card into Pi, connect an HDMI cable to the PI HDMI output (not the added module), connect the USB port to power
-5. After statup, open the IP address displayed in your browser & use `admin/admin` to login
-6. Open the console, login as root & run the install script:
+6. Insert SD card into Pi, connect an HDMI cable to the PI HDMI output (not the added module), connect the USB port to power
+7. After statup, open the IP address in your browser or SSH directly & use `admin/admin` to login
+8. Open the console, login as root & run the install script:
 ```
 $ su -
 **Enter password: root**
