@@ -49,8 +49,44 @@ The official PiKVM is expensive so I decided take build my own & add some featur
 | RST    | 16 (GPIO 23)     |
 | BUSY   | 18 (GPIO 24)     |
 
+## Build PiKVM
+
+To use ethernet over SPI, you will need to build your own version of PiKVM by doing the following:
+
+1. Install tools: `sudo apt install git make curl binutils docker.io -y`
+2. Clone sources: `git clone --depth=1 https://github.com/pikvm/os`
+3. Create the following file `config.mk`:
+```
+# Base board
+BOARD = zero2w
+
+# Hardware configuration
+PLATFORM = v2-hdmi
+
+# Target hostname
+HOSTNAME = pikvm
+
+# ru_RU, etc. UTF-8 only
+LOCALE = en_US
+
+# See /usr/share/zoneinfo
+TIMEZONE = UTC
+
+# For SSH root user
+ROOT_PASSWD = root
+
+# Web UI credentials: user=admin, password=adminpass
+WEBUI_ADMIN_PASSWD = admin
+
+# IPMI credentials: user=admin, password=adminpass
+IPMI_ADMIN_PASSWD = admin
+```
+4. Make the OS: `sudo make os NC=1`
+5. Make image: `sudo make image`
+6. Use the created image inside `images/` in the next step
+
 ## Install
-1. Flash SD card with [latest PiKVM image](https://pikvm.org/download/) using the [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
+1. Flash SD card with your built image or the [latest PiKVM image](https://pikvm.org/download/) using the [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
 2. Open the newly created boot directory on the SD card in your file browser
 3. Enable SSH by creating an empty file: `/boot/ssh`
 4. Edit `/boot/config.txt` to include:
