@@ -115,5 +115,5 @@ $ su -
 ```
 
 ## TODO:
-[USB Storage](https://docs.pikvm.org/msd/#manual-images-uploading)
-[Ethernet Passthrough](https://docs.pikvm.org/usb_ethernet/)
+- [USB Storage](https://docs.pikvm.org/msd/#manual-images-uploading)
+- [Ethernet Passthrough](https://docs.pikvm.org/usb_ethernet/)
