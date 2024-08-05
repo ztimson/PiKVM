@@ -112,3 +112,8 @@ WIFI_PASSWD="wifi_pass"
 $ su -
 **Enter password: root**
 # curl https://git.zakscode.com/ztimson/PiKVM/raw/branch/master/install.sh | bash
+```
+
+## TODO:
+[USB Storage](https://docs.pikvm.org/msd/#manual-images-uploading)
+[Ethernet Passthrough](https://docs.pikvm.org/usb_ethernet/)
